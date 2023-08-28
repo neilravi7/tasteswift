@@ -36,6 +36,19 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 # Application definition
 
+PROJECT_APPS = [
+    'accounts.apps.AccountsConfig',
+    'customers.apps.CustomersConfig',
+    'vendor.apps.VendorConfig',
+
+]
+
+THIRD_PARTY_APPS = [
+    'corsheaders',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,7 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+]+ THIRD_PARTY_APPS + PROJECT_APPS
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -75,6 +89,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tasteswift.wsgi.application'
+
+AUTH_USER_MODEL = 'accounts.User'
 
 
 # Database
