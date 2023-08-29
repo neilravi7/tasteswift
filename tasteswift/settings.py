@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+import datetime
 from pathlib import Path
 import dj_database_url
 
@@ -41,7 +42,7 @@ PROJECT_APPS = [
     'accounts.apps.AccountsConfig',
     'customers.apps.CustomersConfig',
     'vendor.apps.VendorConfig',
-
+    'menu.apps.MenuConfig',
 ]
 
 THIRD_PARTY_APPS = [
@@ -170,3 +171,39 @@ if not DEBUG:    # Tell Django to copy statics to the `staticfiles` directory
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# REST FRAMEWORK SETTINGS 
+REST_FRAMEWORK = {
+    # Json Web Token Obtainer Class
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+
+    "DEFAULT_PERMISSION_CLASSES":(
+        'rest_framework.permissions.AllowAny', 
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=45),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(hours=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN':True,
+    'ALGORITHM': 'HS256',
+        'SIGNING_KEY': SECRET_KEY,
+        'VERIFYING_KEY': None,
+        'AUDIENCE': None,
+        'ISSUER': None,
+    'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
+        'USER_ID_FIELD': 'id',
+        'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+        'TOKEN_TYPE_CLAIM': 'token_type',
+    'JTI_CLAIM': 'jti',
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+        'SLIDING_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
+        'SLIDING_TOKEN_REFRESH_LIFETIME': datetime.timedelta(hours=1),
+}
