@@ -1,3 +1,4 @@
+from typing import Iterable, Optional
 from django.db import models
 from django.conf import settings
 from helper.models import BaseModel
@@ -27,3 +28,7 @@ class Vendor(BaseModel, models.Model):
     
     def __unicode__(self):
         return self.id
+    
+    def save(self, *args, **kwargs):
+        self.photo = "https://delishnow.s3.us-east-005.backblazeb2.com/hero-1.jpg"
+        return super(Vendor, self).save(*args, **kwargs)

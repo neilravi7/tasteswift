@@ -42,7 +42,7 @@ class User(BaseModel, AbstractUser, PermissionsMixin):
     is_customer = models.BooleanField(default=False)
     is_vendor = models.BooleanField(default=False)
     
-    # objects = UserProfileManager()
+    objects = UserProfileManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

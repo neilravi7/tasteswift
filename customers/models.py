@@ -1,3 +1,4 @@
+from typing import Iterable, Optional
 from django.db import models
 from django.conf import settings
 from helper.models import BaseModel
@@ -23,5 +24,10 @@ class Customer(BaseModel, models.Model):
 
     def __str__(self) -> str:
         return self.full_name.capitalize()
+    
+
+    def save(self, *args, **kwargs):
+        self.photo = "http://placebeard.it/640x480"
+        return super(Customer, self).save(*args, **kwargs)
     
     
