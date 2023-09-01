@@ -1,12 +1,12 @@
 from django.db import models
 from django.utils.text import slugify
 from django.urls import reverse
-from vendor.models import Vendor
+from django.conf import settings
 from helper.models import BaseModel
 
 # Create your models here.
 class Category(BaseModel, models.Model):
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image_url = models.URLField(blank=True, null=True)
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
@@ -30,7 +30,7 @@ class Category(BaseModel, models.Model):
 
 
 class FoodItem(BaseModel, models.Model):
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='fooditems')
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)

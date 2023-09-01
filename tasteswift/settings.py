@@ -43,6 +43,7 @@ PROJECT_APPS = [
     'customers.apps.CustomersConfig',
     'vendor.apps.VendorConfig',
     'menu.apps.MenuConfig',
+    'cart.apps.CartConfig',
 ]
 
 THIRD_PARTY_APPS = [

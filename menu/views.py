@@ -43,7 +43,7 @@ class CategoryCreateView(APIView):
     def post(self, request, *args, **kwargs):
             serializer = CategorySerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save(vendor=request.user.user_as_vendor)
+                serializer.save(vendor=request.user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -83,6 +83,6 @@ class FoodItemCreateView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = FoodItemSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(vendor=request.user.user_as_vendor, category_id=request.data.get('category_id'))
+            serializer.save(vendor=request.user, category_id=request.data.get('category_id'))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
