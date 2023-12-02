@@ -14,7 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data['password1'] != data['password2']:
             raise serializers.ValidationError('password not match')
-                
         return super().validate(data)
     
     
@@ -51,6 +50,14 @@ class LoginSerializer(TokenObtainPairSerializer):
                 token[key] = value
         
         return token
+    
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Add your extra responses here
+        data['username'] = self.user.username
+        data['groups'] = self.user.groups.values_list('name', flat=True)
+        return data
 
 User = get_user_model()
 

@@ -48,19 +48,32 @@ class CategoryCreateView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class FoodItemAPIView(APIView):
+
+class FoodItemListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        food_items = FoodItem.objects.all()
+        food_items = FoodItem.objects.filter(vendor_id=request.user.id, is_available=True)
         serializer = FoodItemSerializer(food_items, many=True)
+        return Response(serializer.data)
+    
+
+class FoodItemAPIView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk, *args, **kwargs):
+        food_item = get_object_or_404(FoodItem, pk=pk)
+        serializer = FoodItemSerializer(food_item)
         return Response(serializer.data)
 
     def put(self, request, pk, *args, **kwargs):
         food_item = get_object_or_404(FoodItem, pk=pk)
+        category = get_object_or_404(Category, pk=request.data.get('category'))
         serializer = FoodItemSerializer(food_item, data=request.data)
         if serializer.is_valid():
+            food_item.category = category
             serializer.save()
+            food_item.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -86,3 +99,14 @@ class FoodItemCreateView(APIView):
             serializer.save(vendor=request.user, category_id=request.data.get('category_id'))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class FoodItemCustomerAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk, *args, **kwargs):
+        print("Food Item List: ", pk)
+        food_items = FoodItem.objects.filter(vendor_id=pk, is_available=True)
+        serializer = FoodItemSerializer(food_items, many=True)
+        return Response(serializer.data)

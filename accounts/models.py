@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, BaseUserManager
 from django.utils.translation import gettext_lazy as gl
 from helper.models import BaseModel
+from cart.models import Cart, CartItem
+from location.models import Address
 
 # Create your models here.
 class UserProfileManager(BaseUserManager):
@@ -47,7 +49,7 @@ class User(BaseModel, AbstractUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    class META:
+    class Meta:
         db_table = "accounts"
 
     def __str__(self):
@@ -55,3 +57,29 @@ class User(BaseModel, AbstractUser, PermissionsMixin):
     
     def __unicode__(self):
         return self.id
+    
+    def get_cart(self):
+        cart, created = Cart.objects.get_or_create(customer=self)
+        return cart
+    
+    def get_cart_item(self):
+        cart = self.get_cart()
+        cart_items = CartItem.objects.filter(cart=cart)
+        return cart_items
+    
+    def get_user_phone(self):
+        if self.is_customer:
+            phone = self.user_as_customer.phone
+            return phone
+        if self.is_vendor:
+            phone = self.user_as_vendor.phone
+            return phone
+    
+    def get_user_address(self):
+        address = Address.objects.filter(user_id=self.id).first()
+        if address:
+            return address.address
+        else:
+            return ""
+
+        

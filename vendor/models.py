@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from helper.models import BaseModel
+# from taggit.managers import TaggableManager
 
 #  for day class
 from django.core.exceptions import ValidationError
@@ -20,18 +21,15 @@ class Vendor(BaseModel, models.Model):
     name = models.CharField(max_length=120, blank=True, null=True)
     description = models.TextField(max_length=250, blank=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    cuisine_type = models.CharField(max_length=20, blank=True, null=True)
+    cuisine_type = models.CharField(max_length=300, blank=True, null=True )
     is_approved = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
 
-    # Leave location and reviees s for now
-
-    # class Meta:
-    #     db_table = "vendors"
+    class Meta:
+        db_table = "vendors"
 
     def __str__(self) -> str:
-        return self.full_name.capitalize()
+        return self.name.capitalize()
     
     def __unicode__(self):
         return self.id
@@ -50,13 +48,14 @@ class Day(models.TextChoices):
     SATURDAY = 'sat', _('Saturday')
     SUNDAY = 'sun', _('Sunday')
 
-class OpeningHours(models.Model):
+class OpeningHours(BaseModel, models.Model):
     restaurant = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='opening_hours')
     day = models.CharField(max_length=3, choices=Day.choices)
     opening_time = models.TimeField()
     closing_time = models.TimeField()
 
     class Meta:
+        db_table = "opening_hours"
         unique_together = ('restaurant', 'day')
 
     def __str__(self):

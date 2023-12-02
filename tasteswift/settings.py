@@ -13,6 +13,7 @@ import os
 import datetime
 from pathlib import Path
 import dj_database_url
+import corsheaders
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,15 +27,22 @@ ENV_TYPE = os.environ.get('ENV_TYPE')
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'RENDER' not in os.environ
+# DEBUG = 'RENDER' not in os.environ
+DEBUG = True
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ 'aded-2401-4900-36ac-33bb-80fb-d53-da3f-39e6.ngrok-free.app', 'localhost:8000', 'localhost:3000',  'localhost', '127.0.0.1']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
+# Stripe
+STRIPE_API_KEY_PUBLISHABLE=os.environ.get('STRIPE_API_KEY_PUBLISHABLE')
+STRIPE_API_KEY_HIDDEN=os.environ.get('STRIPE_API_KEY_HIDDEN')
+STRIPE_ENDPOINT_SECRET=os.environ.get('STRIPE_ENDPOINT_SECRET')
+# Mapbox key
+MAPBOX_KEY = os.environ.get('MAPBOX_KEY')
 
 # Application definition
 
@@ -44,12 +52,16 @@ PROJECT_APPS = [
     'vendor.apps.VendorConfig',
     'menu.apps.MenuConfig',
     'cart.apps.CartConfig',
+    'orders.apps.OrdersConfig',
+    'checkout.apps.CheckoutConfig',
+    'location.apps.LocationConfig',
 ]
 
 THIRD_PARTY_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    'taggit',
 ]
 
 INSTALLED_APPS = [
@@ -66,6 +78,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -78,7 +91,7 @@ ROOT_URLCONF = 'tasteswift.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -156,7 +169,15 @@ USE_TZ = True
 # This setting tells Django at which URL static files are going to be served to the user.
 # Here, they well be accessible at your-domain.onrender.com/static/...
 
-STATIC_URL = '/static/'
+
+if DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_URL = '/static/'
+
+    # Extra places for collectstatic to find static files.
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, 'static'),
+    )
 # Following settings only make sense on production and may break development environments.
 
 if not DEBUG:    # Tell Django to copy statics to the `staticfiles` directory
@@ -188,8 +209,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=45),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(hours=1),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=2),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN':True,
@@ -208,3 +229,38 @@ SIMPLE_JWT = {
         'SLIDING_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
         'SLIDING_TOKEN_REFRESH_LIFETIME': datetime.timedelta(hours=1),
 }
+
+
+# CORS Headers Settings:
+# CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',)
+
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'Access-Control-Allow-Origin',)
+
+CORS_ORIGIN_WHITELIST = (
+    "http://localhost:3000",
+    "http://localhost:8000",
+)
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000"
+]

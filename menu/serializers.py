@@ -11,5 +11,6 @@ class CategorySerializer(serializers.ModelSerializer):
 class FoodItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodItem
-        fields = ('id', 'name', 'description', "price", "category_id")
+        fields = ('id', 'name', 'image_url', 'description', "price", "category",)
         read_only_fields = ('id',)
+        depth = 1

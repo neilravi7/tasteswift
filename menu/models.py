@@ -50,5 +50,5 @@ class FoodItem(BaseModel, models.Model):
     
     def save(self, *args, **kwargs) -> None:
         self.slug = slugify(self.name)
-        self.image_url = "https://delishnow.s3.us-east-005.backblazeb2.com/hero-1.jpg"
+        # self.image_url = "https://delishnow.s3.us-east-005.backblazeb2.com/hero-1.jpg"
         return super(FoodItem, self).save(*args, **kwargs)

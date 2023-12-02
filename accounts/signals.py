@@ -11,11 +11,14 @@ User = get_user_model()
 
 @receiver(post_save, sender=User)
 def post_save_user(sender, instance, created, **kwargs):
+    print("signal is called")
     try:
         if created:
             if instance.is_customer:
+                print("user is customer")
                 Customer.objects.create(user=instance)
             elif instance.is_vendor:
+                print("user is vendor")
                 Vendor.objects.create(user=instance)
             else:
                 print("User is admin")

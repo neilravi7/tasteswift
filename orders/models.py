@@ -1,5 +1,5 @@
 from django.db import models
-from helper import BaseModel
+from helper.models import BaseModel
 from django.conf import settings
 from menu.models import FoodItem
 
@@ -32,9 +32,30 @@ class Order(BaseModel, models.Model):
     )
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    display_id = models.CharField(max_length=10)
+    stripe_checkout_id = models.CharField(max_length=80, null=True, blank=True)
+    payment_status=models.CharField(max_length=80, null=True, blank=True)
 
     class Meta:
         db_table = 'orders'
+
+    def get_order_items(self):
+        return OrderItem.objects.filter(order_id=self.id)
+    
+    def get_serialize_items(self):
+        items = self.get_order_items()
+        if len(items) == 0:
+            return []
+        else:
+            return [
+            {
+                "id":item.id, 
+                "name":item.food_item.name, 
+                "image_url":item.food_item.image_url,
+                "quantity":item.quantity
+            } 
+                for item in items
+            ]
     
 
 class OrderItem(BaseModel, models.Model):

@@ -5,7 +5,7 @@ app_name = 'cart'
 
 urlpatterns = [
     # Cart API's
-    path('api/cart/item', views.CartItemListCreateAPIView().as_view(), name='cart'),
+    path('api/items', views.CartCreateView().as_view(), name='cart'),
     
     # path('api/category/create', views.CategoryCreateView().as_view(), name='category_create'),
     # path('api/<uuid:pk>/category', views.CategoryAPIView().as_view(), name='category'),
